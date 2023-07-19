@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="TaskManager.Domain.Views.TaskManagerUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskManager.Domain.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             x:Name="taskManagerUC"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid Background="white">
+        <StackPanel>
+            <Menu Margin="0,0,0,5">
+                <MenuItem Header="File">
+                    <MenuItem Header="Run new task"></MenuItem>
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="Options">
+                    <MenuItem Header="Always on top" IsCheckable="True"></MenuItem>
+                    <MenuItem Header="Minimize on use" IsCheckable="True"></MenuItem>
+                    <MenuItem Header="Hide when minimized" IsCheckable="True"></MenuItem>
+                    <MenuItem Header="Set default tab">
+                        <MenuItem IsCheckable="True" Header="Processes"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="Performance"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="App history"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="Startup"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="Users"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="Details"></MenuItem>
+                        <MenuItem IsCheckable="True" Header="Services"></MenuItem>
+                    </MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="Show full account name" IsEnabled="False"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="Show history for all processes" IsEnabled="False"></MenuItem>
+                </MenuItem>
+
+                <MenuItem Header="View">
+                    <MenuItem Header="Refresh now"></MenuItem>
+                    <MenuItem Header="Update Speed" x:Name="UpdateSpeedMenuItem">
+                        <MenuItem IsCheckable="True" IsChecked="False" Header="High"  ></MenuItem>
+                        <MenuItem IsCheckable="True" IsChecked="True"  Header="Normal"></MenuItem>
+                        <MenuItem IsCheckable="True" IsChecked="False" Header="Low"   ></MenuItem>
+                        <MenuItem IsCheckable="True" IsChecked="False" Header="Paused"></MenuItem>
+                    </MenuItem>
+                    <Separator></Separator>
+                    <MenuItem IsCheckable="True" Header="Group by type"></MenuItem>
+                    <MenuItem Header="Expand all"></MenuItem>
+                    <MenuItem Header="Collapse all"></MenuItem>
+                </MenuItem>
+            </Menu>
+
+            <TabControl>
+                <TabItem Header="Processes" x:Name="processesTab">
+                    <ScrollViewer x:Name="scroll"
+                                Height="400"
+                                  Width="{Binding ElementName=taskManagerUC,Path=Width}">
+                        <ListView ItemsSource="{Binding Processes}"
+                                  SelectedItem="{Binding SelectedProcess}" Height="387">
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+
+                            <ListView.Template>
+                                <ControlTemplate>
+                                    <DockPanel LastChildFill="True">
+                                        <Grid DockPanel.Dock="Top" Height="30">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="10"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="110"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Grid.Column="1" FontSize="14" FontFamily="Cascadia Code SemiBold" FontWeight="DemiBold" Content="Process Id"></Label>
+                                            <Label Grid.Column="2" FontSize="14" FontFamily="Cascadia Code SemiBold" FontWeight="DemiBold" Content="Process Name"></Label>
+                                        </Grid>
+                                        <ScrollViewer>
+                                            <ItemsPresenter />
+                                        </ScrollViewer>
+                                    </DockPanel>
+                                </ControlTemplate>
+                            </ListView.Template>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Grid Margin="0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="25"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock FontFamily="Cascadia Code SemiLight" FontSize="15" Text="{Binding Id}" Grid.Column="1"/>
+                                            <TextBlock FontFamily="Cascadia Code SemiLight" FontSize="15" Text="{Binding ProcessName}" Grid.Column="2"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Create Process"  >
+                    <StackPanel Height="400" Background="SteelBlue">
+                        <Canvas>
+                            <TextBlock
+                                       Text="Enter process name"
+                                       FontSize="20" Canvas.Left="136" Canvas.Top="137" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Width="184">
+                            </TextBlock>
+                            <TextBox FontFamily="Cascadia Code SemiLight"
+                                     FontSize="24"
+                                     Text="{Binding NewProcessName}"
+                                     Width="400" Canvas.Left="28" Canvas.Top="227">
+                            </TextBox>
+                            <Button Content="Create Process"
+                                    FontFamily="Cascadia Code SemiLight"
+                                    FontSize="20"
+                                    Background="Blue"
+                                    Width="197" Canvas.Left="542" Canvas.Top="159" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top"
+                                    Command="{Binding CreateProcessCommand}">
+                            </Button>
+                        </Canvas>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Add to blackbox">
+                    <DockPanel Height="377" Background="White">
+                        <ScrollViewer x:Name="scroll2"
+                                       DockPanel.Dock="Top"
+                                Height="292"
+                                  Width="{Binding ElementName=taskManagerUC,Path=Width}">
+                            <ListView ItemsSource="{Binding BlackBoxProcesses}">
+                                <ListView.Template>
+                                    <ControlTemplate>
+                                        <DockPanel LastChildFill="True">
+                                            <Grid DockPanel.Dock="Top" Height="30">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="10"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="2" FontSize="14" FontFamily="Cascadia Code SemiBold" FontWeight="DemiBold" Content="Process Name"></Label>
+                                            </Grid>
+                                            <ScrollViewer>
+                                                <ItemsPresenter />
+                                            </ScrollViewer>
+                                        </DockPanel>
+                                    </ControlTemplate>
+                                </ListView.Template>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border>
+                                            <Grid Margin="0,1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="25"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock FontFamily="Cascadia Code SemiLight" FontSize="15" Text="{Binding}" Grid.Column="2"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ScrollViewer>
+                        <Button Content="Add Process To Black Box"
+                                FontFamily="Cascadia Code SemiLight"
+                                Height="65"
+                                Foreground="White"
+                                Background="Black"
+                                FontSize="20"
+                                Width="300" Canvas.Left="247" Canvas.Top="172"
+                                Command="{Binding AddProcessToBlackBoxCommand}"/>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+    </Grid>
+</UserControl> 
